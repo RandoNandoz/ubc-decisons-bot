@@ -65,7 +65,10 @@ async def send_applicant_to_review(applicant_decision: ApplicantDecision):
                                                            f"**Average:** {applicant_decision.average}\n"
                                                            f"**Application Date:** {applicant_decision.application_date.strftime('%Y-%m-%d')}\n"
                                                            f"**Comments:** {applicant_decision.comments}\n"
-                                                           f"**Intended Major:** {applicant_decision.intended_major}\n")
+                                                           f"**Intended Major:** {applicant_decision.intended_major}\n"
+                                                           f"**Attachment:** {applicant_decision.attachment}\n"
+
+            )
 
             accepted_embed.set_image(url=user.display_avatar)
 
@@ -110,7 +113,8 @@ async def decision(ctx: discord.ApplicationContext, campus: discord.Option(Campu
                    comments: discord.Option(str, description="Any comments you have about your decision",
                                             required=False), intended_major: discord.Option(str,
                                                                                             description="The program you intended to apply to, if you applied to a different program",
-                                                                                            required=False)):
+                                                                                            required=False),
+                   attachment: discord.Attachment):
     try:
         decision_date = datetime.strptime(decision_date, "%Y-%m-%d")
         application_date = datetime.strptime(application_date, "%Y-%m-%d")
@@ -119,7 +123,7 @@ async def decision(ctx: discord.ApplicationContext, campus: discord.Option(Campu
                                                decision_date=decision_date, international=international,
                                                curriculum=curriculum, average=average,
                                                application_date=application_date, comments=comments,
-                                               intended_major=intended_major)
+                                               intended_major=intended_major, attachment=attachment)
 
         unreviewed_decisions.insert_one(applicant_decision.__dict__())
 

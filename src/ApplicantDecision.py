@@ -1,6 +1,7 @@
 """
 Representation of a decision made for an applicant by ubc admissions
 """
+import discord
 
 import Decision
 import Campus
@@ -23,6 +24,7 @@ class ApplicantDecision:
     application_date: datetime
     comments: Optional[str]
     intended_major: Optional[str]
+    attachment: discord.Attachment
 
     def __dict__(self):
         return {
@@ -37,6 +39,7 @@ class ApplicantDecision:
             "average": self.average,
             "application_date": self.application_date,
             "comments": self.comments,
-            "intended_major": self.intended_major
+            "intended_major": self.intended_major,
+            "attachment": self.attachment.url
         }
 
