@@ -13,6 +13,8 @@ from Campus import Campus
 from Decision import Decision
 from UBCProgram import UBCProgram
 
+import dateutil.parser
+
 intents = discord.Intents.all()
 
 bot = commands.Bot(intents=intents, debug_guilds=[environ["TEST_GUILD_ID"]])
@@ -100,7 +102,7 @@ async def decision(ctx: discord.ApplicationContext, campus: discord.Option(Campu
                    program: discord.Option(UBCProgram, description="The UBC program you applied to", required=True),
                    applicant_decision: discord.Option(Decision, description="The decision you received from UBC",
                                                       required=True),
-                   decision_date: discord.Option(str, description="The date you received your decision, in YYYY-MM-DD",
+                   decision_date: discord.Option(str, description="The date you received your decision, preferably in YYYY-MM-DD",
                                                  required=True),
                    international: discord.Option(bool, description="Whether you are an international student or not",
                                                  required=True), curriculum: discord.Option(str,
@@ -108,7 +110,7 @@ async def decision(ctx: discord.ApplicationContext, campus: discord.Option(Campu
                                                                                             required=True),
                    average: discord.Option(str, description="Your average, for example, 90.5", required=True, min=0,
                                            max=100),
-                   application_date: discord.Option(str, description="The date you applied to UBC, in YYYY-MM-DD",
+                   application_date: discord.Option(str, description="The date you applied to UBC, preferably in YYYY-MM-DD",
                                                     required=True),
                    comments: discord.Option(str, description="Any comments you have about your decision",
                                             required=False), intended_major: discord.Option(str,
@@ -117,8 +119,10 @@ async def decision(ctx: discord.ApplicationContext, campus: discord.Option(Campu
                    attachment: discord.Option(discord.Attachment, description="An attachment to your decision",
                                               required=False)):
     try:
-        decision_date = datetime.strptime(decision_date, "%Y-%m-%d")
-        application_date = datetime.strptime(application_date, "%Y-%m-%d")
+        # decision_date = datetime.strptime(decision_date, "%Y-%m-%d")
+        # application_date = datetime.strptime(application_date, "%Y-%m-%d")
+        decision_date = dateutil.parser.parse(decision_date)
+        application_date = dateutil.parser.parse(application_date)
         applicant_decision = ApplicantDecision(discord_username=ctx.author.name, discord_id=ctx.author.id,
                                                campus=campus, program=program, decision=applicant_decision,
                                                decision_date=decision_date, international=international,
