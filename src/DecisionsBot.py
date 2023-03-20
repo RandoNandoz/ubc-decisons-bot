@@ -1,9 +1,9 @@
 """
 This is a bot for the UBC applicant server to display their received admissions decisions.
 """
-from datetime import datetime
 from os import environ
 
+import dateutil.parser
 import discord
 import pymongo
 from discord.ext import commands
@@ -12,8 +12,6 @@ from ApplicantDecision import ApplicantDecision
 from Campus import Campus
 from Decision import Decision
 from UBCProgram import UBCProgram
-
-import dateutil.parser
 
 intents = discord.Intents.all()
 
@@ -55,6 +53,7 @@ async def send_applicant_to_channel(applicant: ApplicantDecision, channel: disco
     sent_message = await channel.send(embed=embed)
     message_cb(applicant, sent_message)
 
+
 async def get_unreviewed_decisions() -> list[str]:
     users = [d['discord_username'] for d in unreviewed_decisions.find({})]
     unique_users = list(set(users))
@@ -68,9 +67,12 @@ async def accept_all(ctx: discord.ApplicationContext):
         await ctx.respond(f"Accepting {member.mention}")
         await accept(ctx, member)
 
+
 # noinspection PyTypeChecker
 @bot.slash_command(name="accept", description="Accept a decision")
-async def accept(ctx: discord.ApplicationContext, applicant: discord.Option(discord.Member, description="The applicant to accept", required=True, autocomplete=get_unreviewed_decisions)):
+async def accept(ctx: discord.ApplicationContext,
+                 applicant: discord.Option(discord.Member, description="The applicant to accept", required=True,
+                                           autocomplete=get_unreviewed_decisions)):
     db_applicant = ApplicantDecision.from_dict(unreviewed_decisions.find_one({"discord_id": applicant.id}))
     if db_applicant is None:
         await ctx.respond(f"Could not find {applicant.mention} in the database!")
@@ -88,9 +90,10 @@ async def accept(ctx: discord.ApplicationContext, applicant: discord.Option(disc
 
 # noinspection PyTypeChecker
 @bot.slash_command(name="reject", description="Reject a decision")
-async def reject(ctx: discord.ApplicationContext, applicant: discord.Option(discord.Member, description="The applicant to reject", required=True, autocomplete=get_unreviewed_decisions)):
+async def reject(ctx: discord.ApplicationContext,
+                 applicant: discord.Option(discord.Member, description="The applicant to reject", required=True,
+                                           autocomplete=get_unreviewed_decisions)):
     try:
-        applicant_decision = ApplicantDecision.from_dict(unreviewed_decisions.find_one({"discord_id": applicant.id}))
         review_channel: discord.TextChannel = await bot.fetch_channel(int(environ["REVIEW_CHANNEL_ID"]))
         db_applicant = unreviewed_decisions.find_one({"discord_id": applicant.id})
         review_msg: discord.Message = await review_channel.fetch_message(db_applicant["msg_id"])
@@ -99,7 +102,6 @@ async def reject(ctx: discord.ApplicationContext, applicant: discord.Option(disc
         unreviewed_decisions.delete_one(db_applicant)
     except TypeError:
         await ctx.respond(f"Could not find {applicant.mention} in the database!")
-
 
 
 @bot.slash_command(name="decision", description="Submit your UBC admissions decision for review")
@@ -142,12 +144,14 @@ async def decision(ctx: discord.ApplicationContext, campus: discord.Option(Campu
         # REVIEW_CHANNEL_ID is guaranteed to be a discord.TextChannel object
         # noinspection PyTypeChecker
         await send_applicant_to_channel(applicant_decision,
-                                        await bot.fetch_channel(int(environ["REVIEW_CHANNEL_ID"])), add_msg_id_to_applicant)
+                                        await bot.fetch_channel(int(environ["REVIEW_CHANNEL_ID"])),
+                                        add_msg_id_to_applicant)
 
         await ctx.respond(
             "Success! Your decision has been submitted for review by the mods. Expect a response within 24 hours")
     except ValueError:
         await ctx.respond(
             "There was an issue parsing your date format, please use YYYY-MM-DD")
+
 
 bot.run(environ["DISCORD_TOKEN"])

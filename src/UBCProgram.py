@@ -4,6 +4,7 @@ Enum for UBC's ugrad/grad programs
 
 from enum import Enum
 
+
 class UBCProgram(Enum):
     GRADUATE = "Graduate"
     APPLIED_BIOLOGY = "Applied Biology (BSc)"

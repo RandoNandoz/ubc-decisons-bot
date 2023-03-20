@@ -1,15 +1,16 @@
 """
 Representation of a decision made for an applicant by ubc admissions
 """
-import discord
-
-from Decision import Decision
-from Campus import Campus
-from UBCProgram import UBCProgram
 from dataclasses import dataclass
 from datetime import datetime
-import dateutil
 from typing import Optional
+
+import discord
+
+from Campus import Campus
+from Decision import Decision
+from UBCProgram import UBCProgram
+
 
 @dataclass
 class ApplicantDecision():
@@ -27,7 +28,6 @@ class ApplicantDecision():
     intended_major: Optional[str] = None
     attachment: Optional[discord.Attachment] = None
     msg_id: Optional[int] = None
-
 
     @staticmethod
     def from_dict(d: dict):
@@ -65,4 +65,3 @@ class ApplicantDecision():
             "attachment": self.attachment.url if self.attachment else None,
             "msg_id": self.msg_id
         }
-
