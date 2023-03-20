@@ -48,7 +48,11 @@ async def send_applicant_to_channel(applicant: ApplicantDecision, channel: disco
                                                    f"**Application Date:** {applicant.application_date.strftime('%Y-%m-%d')}\n"
                                                    f"**Comments:** {applicant.comments}\n"
                                                    f"**Intended Major:** {applicant.intended_major}\n"
-                                                   f"**Attachment:** {applicant.attachment}\n")
+    )
+
+    embed.set_thumbnail(url=user.display_avatar)
+    if applicant.attachment:
+        embed.set_image(url=applicant.attachment.url)
 
     sent_message = await channel.send(embed=embed)
     message_cb(applicant, sent_message)
