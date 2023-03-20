@@ -19,7 +19,7 @@ class ApplicantDecision:
     decision_date: datetime
     international: bool
     curriculum: str
-    average: float
+    average: str
     application_date: datetime
     comments: Optional[str]
     intended_major: Optional[str]
