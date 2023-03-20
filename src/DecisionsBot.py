@@ -52,7 +52,7 @@ async def send_applicant_to_channel(applicant: ApplicantDecision, channel: disco
 
     embed.set_thumbnail(url=user.display_avatar)
     if applicant.attachment:
-        embed.set_image(url=applicant.attachment.url)
+        embed.set_image(url=applicant.attachment)
 
     sent_message = await channel.send(embed=embed)
     message_cb(applicant, sent_message)
