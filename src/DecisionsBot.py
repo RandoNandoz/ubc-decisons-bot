@@ -28,7 +28,7 @@ unreviewed_decisions = db["unreviewed_decisions"]
 
 @bot.event
 async def on_ready():
-    print("Bot is ready")
+    print("Bot is ready, logged in as {0.user}".format(bot))
 
 
 # default callable is noop https://stackoverflow.com/questions/690622/whats-a-standard-way-to-do-a-no-op-in-python
