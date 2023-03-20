@@ -62,6 +62,6 @@ class ApplicantDecision():
             "application_date": self.application_date,
             "comments": self.comments,
             "intended_major": self.intended_major,
-            "attachment": self.attachment.url if self.attachment else None,
+            "attachment": self.attachment if self.attachment else None,
             "msg_id": self.msg_id
         }
