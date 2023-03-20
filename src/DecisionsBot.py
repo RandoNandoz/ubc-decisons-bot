@@ -114,7 +114,8 @@ async def decision(ctx: discord.ApplicationContext, campus: discord.Option(Campu
                                             required=False), intended_major: discord.Option(str,
                                                                                             description="The program you intended to apply to, if you applied to a different program",
                                                                                             required=False),
-                   attachment: discord.Attachment):
+                   attachment: discord.Option(discord.Attachment, description="An attachment to your decision",
+                                              required=False)):
     try:
         decision_date = datetime.strptime(decision_date, "%Y-%m-%d")
         application_date = datetime.strptime(application_date, "%Y-%m-%d")
