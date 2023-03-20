@@ -90,7 +90,7 @@ async def on_ready():
     print("Bot is ready")
 
 
-@bot.slash_command(name="decision")
+@bot.slash_command(name="decision", description="Submit your UBC admissions decision for review")
 async def decision(ctx: discord.ApplicationContext, campus: discord.Option(Campus,
                                                                            description="The UBC Campus you applied to, either Vancouver or Okanagan",
                                                                            required=True),
