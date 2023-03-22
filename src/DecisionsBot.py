@@ -77,19 +77,20 @@ async def accept_all(ctx: discord.ApplicationContext):
 async def accept(ctx: discord.ApplicationContext,
                  applicant: discord.Option(discord.Member, description="The applicant to accept", required=True,
                                            autocomplete=get_unreviewed_decisions)):
-    db_applicant = ApplicantDecision.from_dict(unreviewed_decisions.find_one({"discord_id": applicant.id}))
-    if db_applicant is None:
+    db_applicant_req = unreviewed_decisions.find_one({"discord_id": applicant.id})
+    if db_applicant_req is not None:
+        db_applicant = ApplicantDecision.from_dict(db_applicant_req)
+        # guaranteed to be a discord.TextChannel object
+        # noinspection PyTypeChecker
+        await send_applicant_to_channel(db_applicant, bot.get_channel(int(environ["ACCEPTED_CHANNEL_ID"])))
+        review_channel: discord.TextChannel = await bot.fetch_channel(int(environ["REVIEW_CHANNEL_ID"]))
+        review_msg: discord.Message = await review_channel.fetch_message(db_applicant.msg_id)
+        await review_msg.delete()
+        unreviewed_decisions.delete_one({"discord_id": applicant.id})
+        reviewed_decisions.insert_one(db_applicant.__dict__())
+        await ctx.respond(f"Accepted {applicant.mention}!")
+    else:
         await ctx.respond(f"Could not find {applicant.mention} in the database!")
-        return
-    # guaranteed to be a discord.TextChannel object
-    # noinspection PyTypeChecker
-    await send_applicant_to_channel(db_applicant, bot.get_channel(int(environ["ACCEPTED_CHANNEL_ID"])))
-    review_channel: discord.TextChannel = await bot.fetch_channel(int(environ["REVIEW_CHANNEL_ID"]))
-    review_msg: discord.Message = await review_channel.fetch_message(db_applicant.msg_id)
-    await review_msg.delete()
-    unreviewed_decisions.delete_one({"discord_id": applicant.id})
-    reviewed_decisions.insert_one(db_applicant.__dict__())
-    await ctx.respond(f"Accepted {applicant.mention}!")
 
 
 # noinspection PyTypeChecker
